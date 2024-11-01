@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Database Management</title>
+    <style>
+        #studentsList div{
+            margin: 10px;
+            padding: 10px;
+            border: 2px solid black;
+            border-radius: 10px;
+            background-color: aquamarine;
+        }
+    </style>
+</head>
+<body>
+    <center>
+    <h1>Student Database Management</h1>
+    <form id="studentForm">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="number" id="age" placeholder="Age" required>
+        <input type="text" id="course" placeholder="Course" required>
+        <input type="number" id="phone" placeholder="Phone" required><br>
+        <button type="submit">Add Student</button>
+    </form>
+    <div id="studentsList"></div>
+    </center>
+
+    <script>
+        async function fetchStudents() {
+            const response = await fetch('/students/');
+            const students = await response.json();
+            document.getElementById('studentsList').innerHTML = students.map(student =>
+                `<div>${student.name} - Age: ${student.age} - grade: ${student.course} - phone: ${student.phone} </div>`
+            ).join('');
+        }
+
+        document.getElementById('studentForm').onsubmit = async (event) => {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const age = document.getElementById('age').value;
+            const course = document.getElementById('course').value;
+            const phone = document.getElementById('phone').value;
+
+            await fetch('/students/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, age, course, phone })
+            });
+
+            fetchStudents();
+        }
+
+        fetchStudents();
+    </script>
+</body>
+</html>
